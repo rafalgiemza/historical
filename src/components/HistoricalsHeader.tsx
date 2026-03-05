@@ -1,3 +1,4 @@
+import { useState, useEffect } from "preact/hooks";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import type { Holiday } from "../historical.types";
@@ -9,7 +10,7 @@ export interface DateRange {
 
 interface HistoricalsHeaderProps {
   dateRange: DateRange;
-  onChange: (range: DateRange) => void;
+  onSubmit: (range: DateRange) => void;
   holidays: Holiday[] | null;
 }
 
@@ -25,10 +26,15 @@ function isWeekday(date: Date): boolean {
 
 export function HistoricalsHeader({
   dateRange,
-  onChange,
+  onSubmit,
   holidays,
 }: HistoricalsHeaderProps) {
+  const [localRange, setLocalRange] = useState<DateRange>(dateRange);
   const excludedDates = (holidays ?? []).map((h) => parseHolidayDate(h.date));
+
+  useEffect(() => {
+    setLocalRange(dateRange);
+  }, [dateRange.startDate, dateRange.endDate]);
 
   return (
     <header class="header">
@@ -39,8 +45,8 @@ export function HistoricalsHeader({
         <label class="filter-label">
           <span class="filter-label-text">Start Date</span>
           <DatePicker
-            selected={dateRange.startDate}
-            onChange={(date) => onChange({ ...dateRange, startDate: date })}
+            selected={localRange.startDate}
+            onChange={(date) => setLocalRange((prev) => ({ ...prev, startDate: date }))}
             excludeDates={excludedDates}
             filterDate={isWeekday}
             dateFormat="MM/dd/yyyy"
@@ -50,14 +56,15 @@ export function HistoricalsHeader({
         <label class="filter-label">
           <span class="filter-label-text">End Date</span>
           <DatePicker
-            selected={dateRange.endDate}
-            onChange={(date) => onChange({ ...dateRange, endDate: date })}
+            selected={localRange.endDate}
+            onChange={(date) => setLocalRange((prev) => ({ ...prev, endDate: date }))}
             excludeDates={excludedDates}
             filterDate={isWeekday}
             dateFormat="MM/dd/yyyy"
             placeholderText="MM/dd/yyyy"
           />
         </label>
+        <button onClick={() => onSubmit(localRange)}>Submit</button>
       </div>
     </header>
   );

@@ -71,7 +71,7 @@ export function HistoricalsDashboard() {
     <div class="app-layout">
       <HistoricalsHeader
         dateRange={dateRange}
-        onChange={setDateRange}
+        onSubmit={setDateRange}
         holidays={holidays.data}
       />
       <HistoricalsContent />
