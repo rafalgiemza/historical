@@ -1,19 +1,27 @@
-import { useState, useEffect, useRef } from 'preact/hooks';
-import type { AsyncState } from '../types';
-import type { HistoricalRun, EmailRun, OptimaRun } from '../historical.types';
-import { fetchEmailRuns, fetchOptimaRuns } from '../services/api';
+import { useState, useEffect, useRef } from "preact/hooks";
+import type { AsyncState } from "../types";
+import type { HistoricalRun, EmailRun, OptimaRun } from "../historical.types";
+import { fetchEmailRuns, fetchOptimaRuns } from "../services/api";
 
 interface HistoricalsDrawerProps {
   run: HistoricalRun | null;
   onClose: () => void;
 }
 
-type Tab = 'email' | 'optima';
+type Tab = "email" | "optima";
 
 export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
-  const [activeTab, setActiveTab] = useState<Tab>('email');
-  const [emailRuns, setEmailRuns] = useState<AsyncState<EmailRun[]>>({ data: null, loading: false, error: null });
-  const [optimaRuns, setOptimaRuns] = useState<AsyncState<OptimaRun[]>>({ data: null, loading: false, error: null });
+  const [activeTab, setActiveTab] = useState<Tab>("email");
+  const [emailRuns, setEmailRuns] = useState<AsyncState<EmailRun[]>>({
+    data: null,
+    loading: false,
+    error: null,
+  });
+  const [optimaRuns, setOptimaRuns] = useState<AsyncState<OptimaRun[]>>({
+    data: null,
+    loading: false,
+    error: null,
+  });
 
   const emailLoadedFor = useRef<string | null>(null);
   const optimaLoadedFor = useRef<string | null>(null);
@@ -23,11 +31,11 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
     optimaLoadedFor.current = null;
     setEmailRuns({ data: null, loading: false, error: null });
     setOptimaRuns({ data: null, loading: false, error: null });
-    setActiveTab('email');
+    setActiveTab("email");
   }, [run?.valuationDate]);
 
   useEffect(() => {
-    if (!run || activeTab !== 'email') return;
+    if (!run || activeTab !== "email") return;
     if (emailLoadedFor.current === run.valuationDate) return;
 
     emailLoadedFor.current = run.valuationDate;
@@ -39,13 +47,17 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
         setEmailRuns({ data, loading: false, error: null });
       } catch (err) {
         emailLoadedFor.current = null;
-        setEmailRuns({ data: null, loading: false, error: (err as Error).message });
+        setEmailRuns({
+          data: null,
+          loading: false,
+          error: (err as Error).message,
+        });
       }
     })();
   }, [run?.valuationDate, activeTab]);
 
   useEffect(() => {
-    if (!run || activeTab !== 'optima') return;
+    if (!run || activeTab !== "optima") return;
     if (optimaLoadedFor.current === run.valuationDate) return;
 
     optimaLoadedFor.current = run.valuationDate;
@@ -57,7 +69,11 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
         setOptimaRuns({ data, loading: false, error: null });
       } catch (err) {
         optimaLoadedFor.current = null;
-        setOptimaRuns({ data: null, loading: false, error: (err as Error).message });
+        setOptimaRuns({
+          data: null,
+          loading: false,
+          error: (err as Error).message,
+        });
       }
     })();
   }, [run?.valuationDate, activeTab]);
@@ -67,41 +83,53 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
   return (
     <>
       <div
-        class={`drawer-backdrop${isOpen ? ' drawer-backdrop--visible' : ''}`}
+        class={`drawer-backdrop${isOpen ? " drawer-backdrop--visible" : ""}`}
         onClick={onClose}
       />
-      <aside class={`drawer${isOpen ? ' drawer--open' : ''}`}>
+      <aside class={`drawer${isOpen ? " drawer--open" : ""}`}>
         {run && (
           <>
             <div class="drawer-header">
               <div class="drawer-user-info">
                 <h2 class="drawer-user-name">Valuation: {run.valuationDate}</h2>
-                <p class="drawer-user-email">Counterparties: {run.totalCounterparty}</p>
-                <p class="drawer-user-company">{run.startDate} – {run.endDate}</p>
+                <p class="drawer-user-email">
+                  Counterparties: {run.totalCounterparty}
+                </p>
+                <p class="drawer-user-company">
+                  {run.startDate} – {run.endDate}
+                </p>
               </div>
-              <button class="drawer-close" onClick={onClose} aria-label="Zamknij">
+              <button
+                class="drawer-close"
+                onClick={onClose}
+                aria-label="Zamknij"
+              >
                 ×
               </button>
             </div>
 
             <div class="drawer-tabs">
               <button
-                class={`tab-btn${activeTab === 'email' ? ' tab-btn--active' : ''}`}
-                onClick={() => setActiveTab('email')}
+                class={`tab-btn${activeTab === "email" ? " tab-btn--active" : ""}`}
+                onClick={() => setActiveTab("email")}
               >
                 Email Runs
               </button>
               <button
-                class={`tab-btn${activeTab === 'optima' ? ' tab-btn--active' : ''}`}
-                onClick={() => setActiveTab('optima')}
+                class={`tab-btn${activeTab === "optima" ? " tab-btn--active" : ""}`}
+                onClick={() => setActiveTab("optima")}
               >
                 Optima Runs
               </button>
             </div>
 
             <div class="drawer-content">
-              {activeTab === 'email' && <EmailRunsTabContent emailRuns={emailRuns} />}
-              {activeTab === 'optima' && <OptimaRunsTabContent optimaRuns={optimaRuns} />}
+              {activeTab === "email" && (
+                <EmailRunsTabContent emailRuns={emailRuns} />
+              )}
+              {activeTab === "optima" && (
+                <OptimaRunsTabContent optimaRuns={optimaRuns} />
+              )}
             </div>
           </>
         )}
@@ -110,7 +138,11 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
   );
 }
 
-function EmailRunsTabContent({ emailRuns }: { emailRuns: AsyncState<EmailRun[]> }) {
+function EmailRunsTabContent({
+  emailRuns,
+}: {
+  emailRuns: AsyncState<EmailRun[]>;
+}) {
   if (emailRuns.loading) {
     return (
       <div class="tab-state">
@@ -155,7 +187,11 @@ function EmailRunsTabContent({ emailRuns }: { emailRuns: AsyncState<EmailRun[]> 
   );
 }
 
-function OptimaRunsTabContent({ optimaRuns }: { optimaRuns: AsyncState<OptimaRun[]> }) {
+function OptimaRunsTabContent({
+  optimaRuns,
+}: {
+  optimaRuns: AsyncState<OptimaRun[]>;
+}) {
   if (optimaRuns.loading) {
     return (
       <div class="tab-state">

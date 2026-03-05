@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo } from 'preact/hooks';
-import { Header } from '../components/Header';
-import { UserList } from '../components/UserList';
-import { Drawer } from '../components/Drawer';
-import { getMockGeolocation } from '../services/geo';
-import { fetchAllUsers } from '../services/api';
-import type { AsyncState, GeoLocation, Todo, User } from '../types';
+import { useState, useEffect, useMemo } from "preact/hooks";
+import { Header } from "../components/Header";
+import { UserList } from "../components/UserList";
+import { Drawer } from "../components/Drawer";
+import { getMockGeolocation } from "../services/geo";
+import { fetchAllUsers } from "../services/api";
+import type { AsyncState, GeoLocation, Todo, User } from "../types";
 
 const DEFAULT_LAT_RANGE = 10;
 const DEFAULT_LNG_RANGE = 10;
@@ -18,17 +18,28 @@ function filterUsers(
   return users.filter((user) => {
     const userLat = parseFloat(user.address.geo.lat);
     const userLng = parseFloat(user.address.geo.lng);
-    return Math.abs(userLat - center.lat) <= latRange && Math.abs(userLng - center.lng) <= lngRange;
+    return (
+      Math.abs(userLat - center.lat) <= latRange &&
+      Math.abs(userLng - center.lng) <= lngRange
+    );
   });
 }
 
 export function UsersDashboard() {
-  const [todos, setTodos] = useState<AsyncState<Todo[]>>({ data: null, loading: true, error: null });
+  const [todos, setTodos] = useState<AsyncState<Todo[]>>({
+    data: null,
+    loading: true,
+    error: null,
+  });
 
   const [myLocation, setMyLocation] = useState<GeoLocation | null>(null);
   const [locationLoading, setLocationLoading] = useState(true);
 
-  const [users, setUsers] = useState<AsyncState<User[]>>({ data: null, loading: true, error: null });
+  const [users, setUsers] = useState<AsyncState<User[]>>({
+    data: null,
+    loading: true,
+    error: null,
+  });
 
   const [activeFilter, setActiveFilter] = useState({
     lat: DEFAULT_LAT_RANGE,
@@ -41,7 +52,7 @@ export function UsersDashboard() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch('https://jsonplaceholder.typicode.com/todos');
+        const res = await fetch("https://jsonplaceholder.typicode.com/todos");
         const data: Todo[] = await res.json();
         setTodos({ data, loading: false, error: null });
       } catch (err) {
@@ -82,13 +93,18 @@ export function UsersDashboard() {
   // Derive filtered users reactively
   const filteredUsers = useMemo(() => {
     if (!myLocation || !users.data) return [];
-    return filterUsers(users.data, myLocation, activeFilter.lat, activeFilter.lng);
+    return filterUsers(
+      users.data,
+      myLocation,
+      activeFilter.lat,
+      activeFilter.lng,
+    );
   }, [myLocation, users.data, activeFilter]);
 
   const handleSearch = (lat: number, lng: number) => {
     setActiveFilter({ lat, lng });
     const params = new URLSearchParams({ lat: String(lat), lng: String(lng) });
-    window.history.pushState(null, '', `/users?${params.toString()}`);
+    window.history.pushState(null, "", `/users?${params.toString()}`);
   };
 
   const isLoading = users.loading || locationLoading;
@@ -103,7 +119,8 @@ export function UsersDashboard() {
       <main class="app-main">
         {!isLoading && !users.error && (
           <p class="results-count">
-            Wyświetlanie {filteredUsers.length} z {users.data?.length ?? 0} użytkowników
+            Wyświetlanie {filteredUsers.length} z {users.data?.length ?? 0}{" "}
+            użytkowników
           </p>
         )}
         <UserList

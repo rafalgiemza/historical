@@ -1,17 +1,21 @@
-import { useState, useEffect, useRef } from 'preact/hooks';
-import type { User, Post, Comment, AsyncState } from '../types';
-import { fetchPostsByUser, fetchCommentsByPostIds } from '../services/api';
+import { useState, useEffect, useRef } from "preact/hooks";
+import type { User, Post, Comment, AsyncState } from "../types";
+import { fetchPostsByUser, fetchCommentsByPostIds } from "../services/api";
 
 interface DrawerProps {
   user: User | null;
   onClose: () => void;
 }
 
-type Tab = 'posts' | 'comments';
+type Tab = "posts" | "comments";
 
 export function Drawer({ user, onClose }: DrawerProps) {
-  const [activeTab, setActiveTab] = useState<Tab>('posts');
-  const [posts, setPosts] = useState<AsyncState<Post[]>>({ data: null, loading: false, error: null });
+  const [activeTab, setActiveTab] = useState<Tab>("posts");
+  const [posts, setPosts] = useState<AsyncState<Post[]>>({
+    data: null,
+    loading: false,
+    error: null,
+  });
   const [comments, setComments] = useState<AsyncState<Comment[]>>({
     data: null,
     loading: false,
@@ -28,12 +32,12 @@ export function Drawer({ user, onClose }: DrawerProps) {
     commentsLoadedFor.current = null;
     setPosts({ data: null, loading: false, error: null });
     setComments({ data: null, loading: false, error: null });
-    setActiveTab('posts');
+    setActiveTab("posts");
   }, [user?.id]);
 
   // Lazy-load posts when Posts tab is active
   useEffect(() => {
-    if (!user || activeTab !== 'posts') return;
+    if (!user || activeTab !== "posts") return;
     if (postsLoadedFor.current === user.id) return;
 
     postsLoadedFor.current = user.id;
@@ -52,7 +56,7 @@ export function Drawer({ user, onClose }: DrawerProps) {
 
   // Lazy-load comments when Comments tab is active
   useEffect(() => {
-    if (!user || activeTab !== 'comments') return;
+    if (!user || activeTab !== "comments") return;
     if (commentsLoadedFor.current === user.id) return;
 
     commentsLoadedFor.current = user.id;
@@ -66,7 +70,11 @@ export function Drawer({ user, onClose }: DrawerProps) {
         setComments({ data, loading: false, error: null });
       } catch (err) {
         commentsLoadedFor.current = null; // allow retry
-        setComments({ data: null, loading: false, error: (err as Error).message });
+        setComments({
+          data: null,
+          loading: false,
+          error: (err as Error).message,
+        });
       }
     })();
   }, [user?.id, activeTab]);
@@ -76,10 +84,10 @@ export function Drawer({ user, onClose }: DrawerProps) {
   return (
     <>
       <div
-        class={`drawer-backdrop${isOpen ? ' drawer-backdrop--visible' : ''}`}
+        class={`drawer-backdrop${isOpen ? " drawer-backdrop--visible" : ""}`}
         onClick={onClose}
       />
-      <aside class={`drawer${isOpen ? ' drawer--open' : ''}`}>
+      <aside class={`drawer${isOpen ? " drawer--open" : ""}`}>
         {user && (
           <>
             <div class="drawer-header">
@@ -88,29 +96,35 @@ export function Drawer({ user, onClose }: DrawerProps) {
                 <p class="drawer-user-email">{user.email}</p>
                 <p class="drawer-user-company">{user.company.name}</p>
               </div>
-              <button class="drawer-close" onClick={onClose} aria-label="Zamknij">
+              <button
+                class="drawer-close"
+                onClick={onClose}
+                aria-label="Zamknij"
+              >
                 ×
               </button>
             </div>
 
             <div class="drawer-tabs">
               <button
-                class={`tab-btn${activeTab === 'posts' ? ' tab-btn--active' : ''}`}
-                onClick={() => setActiveTab('posts')}
+                class={`tab-btn${activeTab === "posts" ? " tab-btn--active" : ""}`}
+                onClick={() => setActiveTab("posts")}
               >
                 Posts
               </button>
               <button
-                class={`tab-btn${activeTab === 'comments' ? ' tab-btn--active' : ''}`}
-                onClick={() => setActiveTab('comments')}
+                class={`tab-btn${activeTab === "comments" ? " tab-btn--active" : ""}`}
+                onClick={() => setActiveTab("comments")}
               >
                 Comments
               </button>
             </div>
 
             <div class="drawer-content">
-              {activeTab === 'posts' && <PostsTabContent posts={posts} />}
-              {activeTab === 'comments' && <CommentsTabContent comments={comments} />}
+              {activeTab === "posts" && <PostsTabContent posts={posts} />}
+              {activeTab === "comments" && (
+                <CommentsTabContent comments={comments} />
+              )}
             </div>
           </>
         )}
