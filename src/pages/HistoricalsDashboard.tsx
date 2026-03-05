@@ -21,23 +21,31 @@ function addBusinessDays(start: Date, days: number, holidays: Holiday[]): Date {
   while (count < days) {
     current.setDate(current.getDate() + 1);
     const dayOfWeek = current.getDay();
-    if (dayOfWeek !== 0 && dayOfWeek !== 6 && !holidaySet.has(formatMDY(current))) {
+    if (
+      dayOfWeek !== 0 &&
+      dayOfWeek !== 6 &&
+      !holidaySet.has(formatMDY(current))
+    ) {
       count++;
     }
   }
   return current;
 }
 
+const initialState: AsyncState<never> = {
+  data: null,
+  loading: true,
+  error: null,
+};
+
+const initialDateRange: DateRange = {
+  startDate: null,
+  endDate: null,
+};
+
 export function HistoricalsDashboard() {
-  const [holidays, setHolidays] = useState<AsyncState<Holiday[]>>({
-    data: null,
-    loading: true,
-    error: null,
-  });
-  const [dateRange, setDateRange] = useState<DateRange>({
-    startDate: null,
-    endDate: null,
-  });
+  const [holidays, setHolidays] = useState<AsyncState<Holiday[]>>(initialState);
+  const [dateRange, setDateRange] = useState<DateRange>(initialDateRange);
 
   useEffect(() => {
     (async () => {
