@@ -56,8 +56,22 @@ const MOCK_HISTORICAL_RUNS: HistoricalRun[] = [
   },
 ];
 
-export async function fetchHistoricalRuns(): Promise<HistoricalRun[]> {
-  console.log("%c 🔺: MOCK_HISTORICAL_RUNS ", MOCK_HISTORICAL_RUNS);
+function formatMDY(date: Date): string {
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${mm}/${dd}/${date.getFullYear()}`;
+}
+
+export async function fetchHistoricalRuns(
+  startDate: Date,
+  endDate: Date,
+): Promise<HistoricalRun[]> {
+  const start = formatMDY(startDate);
+  const end = formatMDY(endDate);
+  console.log("%c 🔺: MOCK_HISTORICAL_RUNS ", MOCK_HISTORICAL_RUNS, {
+    startDate: start,
+    endDate: end,
+  });
   return Promise.resolve(MOCK_HISTORICAL_RUNS);
 }
 

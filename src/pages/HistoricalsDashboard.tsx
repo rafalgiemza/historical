@@ -8,12 +8,6 @@ import {
 } from "../components/HistoricalsHeader";
 import { HistoricalsContent } from "../components/HistoricalsContent";
 
-function formatMDY(date: Date): string {
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  return `${mm}/${dd}/${date.getFullYear()}`;
-}
-
 function addBusinessDays(start: Date, days: number, holidays: Holiday[]): Date {
   const holidaySet = new Set(holidays.map((h) => h.date));
   let count = 0;
@@ -24,7 +18,7 @@ function addBusinessDays(start: Date, days: number, holidays: Holiday[]): Date {
     if (
       dayOfWeek !== 0 &&
       dayOfWeek !== 6 &&
-      !holidaySet.has(formatMDY(current))
+      !holidaySet.has(`${String(current.getMonth() + 1).padStart(2, "0")}/${String(current.getDate()).padStart(2, "0")}/${current.getFullYear()}`)
     ) {
       count++;
     }
@@ -66,10 +60,10 @@ export function HistoricalsDashboard() {
 
   useEffect(() => {
     if (holidays.data) {
-      setDateRange((prev) => ({
-        ...prev,
+      setDateRange({
         startDate: addBusinessDays(new Date(), 14, holidays.data!),
-      }));
+        endDate: new Date(),
+      });
     }
   }, [holidays.data]);
 
@@ -84,7 +78,10 @@ export function HistoricalsDashboard() {
         onSubmit={setDateRange}
         holidays={holidays.data}
       />
-      <HistoricalsContent />
+      <HistoricalsContent
+        startDate={dateRange.startDate}
+        endDate={dateRange.endDate}
+      />
     </div>
   );
 }

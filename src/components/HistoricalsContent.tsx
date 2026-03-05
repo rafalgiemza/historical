@@ -4,16 +4,23 @@ import type { AsyncState } from "../types";
 import type { HistoricalRun } from "../historical.types";
 import { HistoricalsDrawer } from "./HistoricalsDrawer";
 
-export function HistoricalsContent() {
+interface HistoricalsContentProps {
+  startDate: Date | null;
+  endDate: Date | null;
+}
+
+export function HistoricalsContent({ startDate, endDate }: HistoricalsContentProps) {
   const [historicalRuns, setHistoricalRuns] = useState<
     AsyncState<HistoricalRun[]>
-  >({ data: null, loading: true, error: null });
+  >({ data: null, loading: false, error: null });
   const [selectedRun, setSelectedRun] = useState<HistoricalRun | null>(null);
 
   useEffect(() => {
+    if (!startDate || !endDate) return;
+    setHistoricalRuns({ data: null, loading: true, error: null });
     (async () => {
       try {
-        const data = await fetchHistoricalRuns();
+        const data = await fetchHistoricalRuns(startDate, endDate);
         setHistoricalRuns({ data, loading: false, error: null });
       } catch (err) {
         setHistoricalRuns({
@@ -23,7 +30,7 @@ export function HistoricalsContent() {
         });
       }
     })();
-  }, []);
+  }, [startDate, endDate]);
 
   return (
     <>
