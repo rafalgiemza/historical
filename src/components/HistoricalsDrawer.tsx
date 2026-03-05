@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
 import type { AsyncState } from "../types";
 import type { HistoricalRun, EmailRun, OptimaRun } from "../historical.types";
 import { fetchEmailRuns, fetchOptimaRuns } from "../services/api";
@@ -18,12 +18,7 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
   const [emailRuns, setEmailRuns] = useState<AsyncState<EmailRun[]>>(INITIAL_EMAIL_RUNS);
   const [optimaRuns, setOptimaRuns] = useState<AsyncState<OptimaRun[]>>(INITIAL_OPTIMA_RUNS);
 
-  const emailLoadedFor = useRef<string | null>(null);
-  const optimaLoadedFor = useRef<string | null>(null);
-
   useEffect(() => {
-    emailLoadedFor.current = null;
-    optimaLoadedFor.current = null;
     setEmailRuns(INITIAL_EMAIL_RUNS);
     setOptimaRuns(INITIAL_OPTIMA_RUNS);
     setActiveTab("email");
@@ -31,9 +26,8 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
 
   useEffect(() => {
     if (!run || activeTab !== "email") return;
-    if (emailLoadedFor.current === run.valuationDate) return;
+    if (emailRuns.data !== null || emailRuns.loading || emailRuns.error !== null) return;
 
-    emailLoadedFor.current = run.valuationDate;
     setEmailRuns({ data: null, loading: true, error: null });
 
     (async () => {
@@ -41,7 +35,6 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
         const data = await fetchEmailRuns();
         setEmailRuns({ data, loading: false, error: null });
       } catch (err) {
-        emailLoadedFor.current = null;
         setEmailRuns({
           data: null,
           loading: false,
@@ -49,13 +42,12 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
         });
       }
     })();
-  }, [run?.valuationDate, activeTab]);
+  }, [run?.valuationDate, activeTab, emailRuns]);
 
   useEffect(() => {
     if (!run || activeTab !== "optima") return;
-    if (optimaLoadedFor.current === run.valuationDate) return;
+    if (optimaRuns.data !== null || optimaRuns.loading || optimaRuns.error !== null) return;
 
-    optimaLoadedFor.current = run.valuationDate;
     setOptimaRuns({ data: null, loading: true, error: null });
 
     (async () => {
@@ -63,7 +55,6 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
         const data = await fetchOptimaRuns();
         setOptimaRuns({ data, loading: false, error: null });
       } catch (err) {
-        optimaLoadedFor.current = null;
         setOptimaRuns({
           data: null,
           loading: false,
@@ -71,7 +62,7 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
         });
       }
     })();
-  }, [run?.valuationDate, activeTab]);
+  }, [run?.valuationDate, activeTab, optimaRuns]);
 
   const isOpen = run !== null;
 
