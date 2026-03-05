@@ -1,6 +1,6 @@
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import type { Holiday } from '../historical.types';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import type { Holiday } from "../historical.types";
 
 export interface DateRange {
   startDate: Date | null;
@@ -14,7 +14,7 @@ interface HistoricalsHeaderProps {
 }
 
 function parseHolidayDate(dateStr: string): Date {
-  const [month, day, year] = dateStr.split('/');
+  const [month, day, year] = dateStr.split("/");
   return new Date(Number(year), Number(month) - 1, Number(day));
 }
 
@@ -23,7 +23,11 @@ function isWeekday(date: Date): boolean {
   return day !== 0 && day !== 6;
 }
 
-export function HistoricalsHeader({ dateRange, onChange, holidays }: HistoricalsHeaderProps) {
+export function HistoricalsHeader({
+  dateRange,
+  onChange,
+  holidays,
+}: HistoricalsHeaderProps) {
   const excludedDates = (holidays ?? []).map((h) => parseHolidayDate(h.date));
 
   return (
