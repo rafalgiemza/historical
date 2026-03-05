@@ -31,7 +31,6 @@ const MOCK_HOLIDAYS: Holiday[] = [
 ];
 
 export async function fetchHolidays(): Promise<Holiday[]> {
-  console.log("👊: fetchHolidays ");
   return Promise.resolve(MOCK_HOLIDAYS);
 }
 

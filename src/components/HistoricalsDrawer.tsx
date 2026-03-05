@@ -90,12 +90,12 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
         {run && (
           <>
             <div class="drawer-header">
-              <div class="drawer-user-info">
-                <h2 class="drawer-user-name">Valuation: {run.valuationDate}</h2>
-                <p class="drawer-user-email">
+              <div class="drawer-run-info">
+                <h2 class="drawer-run-title">Valuation: {run.valuationDate}</h2>
+                <p class="drawer-run-detail">
                   Counterparties: {run.totalCounterparty}
                 </p>
-                <p class="drawer-user-company">
+                <p class="drawer-run-detail">
                   {run.startDate} – {run.endDate}
                 </p>
               </div>
@@ -224,8 +224,8 @@ function OptimaRunsTabContent({
         </tr>
       </thead>
       <tbody>
-        {optimaRuns.data.map((run, i) => (
-          <tr key={i}>
+        {optimaRuns.data.map((run) => (
+          <tr key={`${run.batchStartDate}-${run.batchEndDate}`}>
             <td>{run.aging}</td>
             <td>{run.batchStartDate}</td>
             <td>{run.batchEndDate}</td>

@@ -8,6 +8,12 @@ import {
 } from "../components/HistoricalsHeader";
 import { HistoricalsDrawer } from "../components/HistoricalsDrawer";
 
+function formatMDY(date: Date): string {
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${mm}/${dd}/${date.getFullYear()}`;
+}
+
 function addBusinessDays(start: Date, days: number, holidays: Holiday[]): Date {
   const holidaySet = new Set(holidays.map((h) => h.date));
   let count = 0;
@@ -15,11 +21,8 @@ function addBusinessDays(start: Date, days: number, holidays: Holiday[]): Date {
   while (count < days) {
     current.setDate(current.getDate() + 1);
     const dayOfWeek = current.getDay();
-    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-      const dateStr = `${String(current.getMonth() + 1).padStart(2, "0")}/${String(current.getDate()).padStart(2, "0")}/${current.getFullYear()}`;
-      if (!holidaySet.has(dateStr)) {
-        count++;
-      }
+    if (dayOfWeek !== 0 && dayOfWeek !== 6 && !holidaySet.has(formatMDY(current))) {
+      count++;
     }
   }
   return current;
@@ -113,8 +116,8 @@ export function HistoricalsDashboard() {
                 {historicalRuns.data.map((run) => (
                   <tr
                     key={run.valuationDate}
+                    class="run-row"
                     onClick={() => setSelectedRun(run)}
-                    style={{ cursor: "pointer" }}
                   >
                     <td>{run.valuationDate}</td>
                     <td>{run.totalCounterparty}</td>

@@ -135,6 +135,16 @@
   margin-bottom: 16px;
 }
 
+/* ===== Runs table ===== */
+.run-row {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.run-row:hover {
+  background: var(--bg-hover);
+}
+
 /* ===== Async states ===== */
 .state-container {
   display: flex;
@@ -316,6 +326,26 @@
 .drawer-user-company {
   font-size: 0.8rem;
   color: var(--accent);
+  margin: 0;
+}
+
+.drawer-run-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.drawer-run-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.drawer-run-detail {
+  font-size: 0.83rem;
+  color: var(--text-secondary);
   margin: 0;
 }
 

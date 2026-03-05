@@ -4,7 +4,7 @@ import { UserList } from "../components/UserList";
 import { Drawer } from "../components/Drawer";
 import { getMockGeolocation } from "../services/geo";
 import { fetchAllUsers } from "../services/api";
-import type { AsyncState, GeoLocation, Todo, User } from "../types";
+import type { AsyncState, GeoLocation, User } from "../types";
 
 const DEFAULT_LAT_RANGE = 10;
 const DEFAULT_LNG_RANGE = 10;
@@ -26,12 +26,6 @@ function filterUsers(
 }
 
 export function UsersDashboard() {
-  const [todos, setTodos] = useState<AsyncState<Todo[]>>({
-    data: null,
-    loading: true,
-    error: null,
-  });
-
   const [myLocation, setMyLocation] = useState<GeoLocation | null>(null);
   const [locationLoading, setLocationLoading] = useState(true);
 
@@ -48,24 +42,8 @@ export function UsersDashboard() {
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  // Step 1: Fetch TODOs first — all other fetches are gated on this
+  // Fetch mock geolocation
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch("https://jsonplaceholder.typicode.com/todos");
-        const data: Todo[] = await res.json();
-        setTodos({ data, loading: false, error: null });
-      } catch (err) {
-        setTodos({ data: null, loading: false, error: (err as Error).message });
-      }
-    })();
-  }, []);
-
-  const todosReady = !todos.loading;
-
-  // Step 2: Fetch mock geolocation — only after TODOs are done
-  useEffect(() => {
-    if (!todosReady) return;
     (async () => {
       try {
         const loc = await getMockGeolocation();
@@ -75,11 +53,10 @@ export function UsersDashboard() {
         setLocationLoading(false);
       }
     })();
-  }, [todosReady]);
+  }, []);
 
-  // Step 2: Fetch all users — only after TODOs are done
+  // Fetch all users
   useEffect(() => {
-    if (!todosReady) return;
     (async () => {
       try {
         const data = await fetchAllUsers();
@@ -88,7 +65,7 @@ export function UsersDashboard() {
         setUsers({ data: null, loading: false, error: (err as Error).message });
       }
     })();
-  }, [todosReady]);
+  }, []);
 
   // Derive filtered users reactively
   const filteredUsers = useMemo(() => {
