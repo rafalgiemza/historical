@@ -42,6 +42,13 @@ export interface Comment {
   body: string;
 }
 
+export interface Todo {
+  id: number;
+  userId: number;
+  title: string;
+  completed: boolean;
+}
+
 export interface AsyncState<T> {
   data: T | null;
   loading: boolean;

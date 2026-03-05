@@ -4,7 +4,7 @@ import { UserList } from './components/UserList';
 import { Drawer } from './components/Drawer';
 import { getMockGeolocation } from './services/geo';
 import { fetchAllUsers } from './services/api';
-import type { AsyncState, GeoLocation, User } from './types';
+import type { AsyncState, GeoLocation, Todo, User } from './types';
 import './app.css';
 
 const DEFAULT_LAT_RANGE = 10;
@@ -24,6 +24,8 @@ function filterUsers(
 }
 
 export function App() {
+  const [todos, setTodos] = useState<AsyncState<Todo[]>>({ data: null, loading: true, error: null });
+
   const [myLocation, setMyLocation] = useState<GeoLocation | null>(null);
   const [locationLoading, setLocationLoading] = useState(true);
 
@@ -36,22 +38,34 @@ export function App() {
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  // Fetch mock geolocation on mount (~100ms simulated delay)
+  // Step 1: Fetch TODOs first — all other fetches are gated on this
   useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/todos')
+      .then((res) => res.json())
+      .then((data: Todo[]) => setTodos({ data, loading: false, error: null }))
+      .catch((err: Error) => setTodos({ data: null, loading: false, error: err.message }));
+  }, []);
+
+  const todosReady = !todos.loading;
+
+  // Step 2: Fetch mock geolocation — only after TODOs are done
+  useEffect(() => {
+    if (!todosReady) return;
     getMockGeolocation()
       .then((loc) => {
         setMyLocation(loc);
         setLocationLoading(false);
       })
       .catch(() => setLocationLoading(false));
-  }, []);
+  }, [todosReady]);
 
-  // Fetch all users on mount
+  // Step 2: Fetch all users — only after TODOs are done
   useEffect(() => {
+    if (!todosReady) return;
     fetchAllUsers()
       .then((data) => setUsers({ data, loading: false, error: null }))
       .catch((err: Error) => setUsers({ data: null, loading: false, error: err.message }));
-  }, []);
+  }, [todosReady]);
 
   // Derive filtered users reactively
   const filteredUsers = useMemo(() => {
