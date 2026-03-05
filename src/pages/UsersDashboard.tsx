@@ -39,10 +39,15 @@ export function UsersDashboard() {
 
   // Step 1: Fetch TODOs first — all other fetches are gated on this
   useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/todos')
-      .then((res) => res.json())
-      .then((data: Todo[]) => setTodos({ data, loading: false, error: null }))
-      .catch((err: Error) => setTodos({ data: null, loading: false, error: err.message }));
+    (async () => {
+      try {
+        const res = await fetch('https://jsonplaceholder.typicode.com/todos');
+        const data: Todo[] = await res.json();
+        setTodos({ data, loading: false, error: null });
+      } catch (err) {
+        setTodos({ data: null, loading: false, error: (err as Error).message });
+      }
+    })();
   }, []);
 
   const todosReady = !todos.loading;
@@ -50,20 +55,28 @@ export function UsersDashboard() {
   // Step 2: Fetch mock geolocation — only after TODOs are done
   useEffect(() => {
     if (!todosReady) return;
-    getMockGeolocation()
-      .then((loc) => {
+    (async () => {
+      try {
+        const loc = await getMockGeolocation();
         setMyLocation(loc);
         setLocationLoading(false);
-      })
-      .catch(() => setLocationLoading(false));
+      } catch {
+        setLocationLoading(false);
+      }
+    })();
   }, [todosReady]);
 
   // Step 2: Fetch all users — only after TODOs are done
   useEffect(() => {
     if (!todosReady) return;
-    fetchAllUsers()
-      .then((data) => setUsers({ data, loading: false, error: null }))
-      .catch((err: Error) => setUsers({ data: null, loading: false, error: err.message }));
+    (async () => {
+      try {
+        const data = await fetchAllUsers();
+        setUsers({ data, loading: false, error: null });
+      } catch (err) {
+        setUsers({ data: null, loading: false, error: (err as Error).message });
+      }
+    })();
   }, [todosReady]);
 
   // Derive filtered users reactively

@@ -39,12 +39,15 @@ export function Drawer({ user, onClose }: DrawerProps) {
     postsLoadedFor.current = user.id;
     setPosts({ data: null, loading: true, error: null });
 
-    fetchPostsByUser(user.id)
-      .then((data) => setPosts({ data, loading: false, error: null }))
-      .catch((err: Error) => {
+    (async () => {
+      try {
+        const data = await fetchPostsByUser(user.id);
+        setPosts({ data, loading: false, error: null });
+      } catch (err) {
         postsLoadedFor.current = null; // allow retry
-        setPosts({ data: null, loading: false, error: err.message });
-      });
+        setPosts({ data: null, loading: false, error: (err as Error).message });
+      }
+    })();
   }, [user?.id, activeTab]);
 
   // Lazy-load comments when Comments tab is active
@@ -55,16 +58,17 @@ export function Drawer({ user, onClose }: DrawerProps) {
     commentsLoadedFor.current = user.id;
     setComments({ data: null, loading: true, error: null });
 
-    fetchPostsByUser(user.id)
-      .then((userPosts) => {
+    (async () => {
+      try {
+        const userPosts = await fetchPostsByUser(user.id);
         const postIds = userPosts.map((p) => p.id);
-        return fetchCommentsByPostIds(postIds);
-      })
-      .then((data) => setComments({ data, loading: false, error: null }))
-      .catch((err: Error) => {
+        const data = await fetchCommentsByPostIds(postIds);
+        setComments({ data, loading: false, error: null });
+      } catch (err) {
         commentsLoadedFor.current = null; // allow retry
-        setComments({ data: null, loading: false, error: err.message });
-      });
+        setComments({ data: null, loading: false, error: (err as Error).message });
+      }
+    })();
   }, [user?.id, activeTab]);
 
   const isOpen = user !== null;

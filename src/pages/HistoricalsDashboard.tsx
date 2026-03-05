@@ -30,9 +30,14 @@ export function HistoricalsDashboard() {
 
   // Step 1: Fetch Holidays
   useEffect(() => {
-    fetchHolidays()
-      .then((data) => setHolidays({ data, loading: false, error: null }))
-      .catch((err: Error) => setHolidays({ data: null, loading: false, error: err.message }));
+    (async () => {
+      try {
+        const data = await fetchHolidays();
+        setHolidays({ data, loading: false, error: null });
+      } catch (err) {
+        setHolidays({ data: null, loading: false, error: (err as Error).message });
+      }
+    })();
   }, []);
 
   const holidaysReady = !holidays.loading;
@@ -47,9 +52,14 @@ export function HistoricalsDashboard() {
   // Step 2: Fetch historical runs after holidays are loaded
   useEffect(() => {
     if (!holidaysReady) return;
-    fetchHistoricalRuns()
-      .then((data) => setHistoricalRuns({ data, loading: false, error: null }))
-      .catch((err: Error) => setHistoricalRuns({ data: null, loading: false, error: err.message }));
+    (async () => {
+      try {
+        const data = await fetchHistoricalRuns();
+        setHistoricalRuns({ data, loading: false, error: null });
+      } catch (err) {
+        setHistoricalRuns({ data: null, loading: false, error: (err as Error).message });
+      }
+    })();
   }, [holidaysReady]);
 
   return (

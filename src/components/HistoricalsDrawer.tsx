@@ -33,12 +33,15 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
     emailLoadedFor.current = run.valuationDate;
     setEmailRuns({ data: null, loading: true, error: null });
 
-    fetchEmailRuns()
-      .then((data) => setEmailRuns({ data, loading: false, error: null }))
-      .catch((err: Error) => {
+    (async () => {
+      try {
+        const data = await fetchEmailRuns();
+        setEmailRuns({ data, loading: false, error: null });
+      } catch (err) {
         emailLoadedFor.current = null;
-        setEmailRuns({ data: null, loading: false, error: err.message });
-      });
+        setEmailRuns({ data: null, loading: false, error: (err as Error).message });
+      }
+    })();
   }, [run?.valuationDate, activeTab]);
 
   useEffect(() => {
@@ -48,12 +51,15 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
     optimaLoadedFor.current = run.valuationDate;
     setOptimaRuns({ data: null, loading: true, error: null });
 
-    fetchOptimaRuns()
-      .then((data) => setOptimaRuns({ data, loading: false, error: null }))
-      .catch((err: Error) => {
+    (async () => {
+      try {
+        const data = await fetchOptimaRuns();
+        setOptimaRuns({ data, loading: false, error: null });
+      } catch (err) {
         optimaLoadedFor.current = null;
-        setOptimaRuns({ data: null, loading: false, error: err.message });
-      });
+        setOptimaRuns({ data: null, loading: false, error: (err as Error).message });
+      }
+    })();
   }, [run?.valuationDate, activeTab]);
 
   const isOpen = run !== null;
