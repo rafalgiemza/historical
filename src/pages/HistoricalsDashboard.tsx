@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'preact/hooks';
-import { fetchHolidays } from '../services/api';
+import { fetchHolidays, fetchHistoricalRuns } from '../services/api';
 import type { AsyncState } from '../types';
-import type { Holiday } from '../historical.types';
+import type { Holiday, HistoricalRun } from '../historical.types';
 import { HistoricalsHeader, type DateRange } from '../components/HistoricalsHeader';
+import { HistoricalsDrawer } from '../components/HistoricalsDrawer';
 
 function addBusinessDays(start: Date, days: number, holidays: Holiday[]): Date {
   const holidaySet = new Set(holidays.map((h) => h.date));
@@ -24,6 +25,8 @@ function addBusinessDays(start: Date, days: number, holidays: Holiday[]): Date {
 export function HistoricalsDashboard() {
   const [holidays, setHolidays] = useState<AsyncState<Holiday[]>>({ data: null, loading: true, error: null });
   const [dateRange, setDateRange] = useState<DateRange>({ startDate: null, endDate: null });
+  const [historicalRuns, setHistoricalRuns] = useState<AsyncState<HistoricalRun[]>>({ data: null, loading: true, error: null });
+  const [selectedRun, setSelectedRun] = useState<HistoricalRun | null>(null);
 
   // Step 1: Fetch Holidays
   useEffect(() => {
@@ -32,6 +35,8 @@ export function HistoricalsDashboard() {
       .catch((err: Error) => setHolidays({ data: null, loading: false, error: err.message }));
   }, []);
 
+  const holidaysReady = !holidays.loading;
+
   // Step 2: Set startDate to 14 business days from today after holidays are loaded
   useEffect(() => {
     if (holidays.data) {
@@ -39,32 +44,53 @@ export function HistoricalsDashboard() {
     }
   }, [holidays.data]);
 
+  // Step 2: Fetch historical runs after holidays are loaded
+  useEffect(() => {
+    if (!holidaysReady) return;
+    fetchHistoricalRuns()
+      .then((data) => setHistoricalRuns({ data, loading: false, error: null }))
+      .catch((err: Error) => setHistoricalRuns({ data: null, loading: false, error: err.message }));
+  }, [holidaysReady]);
+
   return (
     <div class="app-layout">
       <HistoricalsHeader dateRange={dateRange} onChange={setDateRange} holidays={holidays.data} />
       <main class="app-main">
-        <h1>Holidays</h1>
-        {holidays.loading && <p>Loading...</p>}
-        {holidays.error && <p>Error: {holidays.error}</p>}
-        {holidays.data && (
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {holidays.data.map((holiday) => (
-                <tr key={holiday.id}>
-                  <td>{holiday.id}</td>
-                  <td>{holiday.date}</td>
+        {historicalRuns.loading && <p>Loading...</p>}
+        {historicalRuns.error && <p>Error: {historicalRuns.error}</p>}
+        {historicalRuns.data && (
+          <>
+            <p class="results-count">
+              Wyświetlanie {historicalRuns.data.length} runów
+            </p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Valuation Date</th>
+                  <th>Total Counterparty</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {historicalRuns.data.map((run) => (
+                  <tr
+                    key={run.valuationDate}
+                    onClick={() => setSelectedRun(run)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <td>{run.valuationDate}</td>
+                    <td>{run.totalCounterparty}</td>
+                    <td>{run.startDate}</td>
+                    <td>{run.endDate}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         )}
       </main>
+      <HistoricalsDrawer run={selectedRun} onClose={() => setSelectedRun(null)} />
     </div>
   );
 }
