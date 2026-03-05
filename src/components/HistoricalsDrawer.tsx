@@ -10,18 +10,13 @@ interface HistoricalsDrawerProps {
 
 type Tab = "email" | "optima";
 
+const INITIAL_EMAIL_RUNS: AsyncState<EmailRun[]> = { data: null, loading: false, error: null };
+const INITIAL_OPTIMA_RUNS: AsyncState<OptimaRun[]> = { data: null, loading: false, error: null };
+
 export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
   const [activeTab, setActiveTab] = useState<Tab>("email");
-  const [emailRuns, setEmailRuns] = useState<AsyncState<EmailRun[]>>({
-    data: null,
-    loading: false,
-    error: null,
-  });
-  const [optimaRuns, setOptimaRuns] = useState<AsyncState<OptimaRun[]>>({
-    data: null,
-    loading: false,
-    error: null,
-  });
+  const [emailRuns, setEmailRuns] = useState<AsyncState<EmailRun[]>>(INITIAL_EMAIL_RUNS);
+  const [optimaRuns, setOptimaRuns] = useState<AsyncState<OptimaRun[]>>(INITIAL_OPTIMA_RUNS);
 
   const emailLoadedFor = useRef<string | null>(null);
   const optimaLoadedFor = useRef<string | null>(null);
@@ -29,8 +24,8 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
   useEffect(() => {
     emailLoadedFor.current = null;
     optimaLoadedFor.current = null;
-    setEmailRuns({ data: null, loading: false, error: null });
-    setOptimaRuns({ data: null, loading: false, error: null });
+    setEmailRuns(INITIAL_EMAIL_RUNS);
+    setOptimaRuns(INITIAL_OPTIMA_RUNS);
     setActiveTab("email");
   }, [run?.valuationDate]);
 
