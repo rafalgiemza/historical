@@ -1,12 +1,12 @@
 import { useState, useEffect } from "preact/hooks";
-import { fetchHolidays, fetchHistoricalRuns } from "../services/api";
+import { fetchHolidays } from "../services/api";
 import type { AsyncState } from "../types";
-import type { Holiday, HistoricalRun } from "../historical.types";
+import type { Holiday } from "../historical.types";
 import {
   HistoricalsHeader,
   type DateRange,
 } from "../components/HistoricalsHeader";
-import { HistoricalsDrawer } from "../components/HistoricalsDrawer";
+import { HistoricalsContent } from "../components/HistoricalsContent";
 
 function formatMDY(date: Date): string {
   const mm = String(date.getMonth() + 1).padStart(2, "0");
@@ -38,12 +38,7 @@ export function HistoricalsDashboard() {
     startDate: null,
     endDate: null,
   });
-  const [historicalRuns, setHistoricalRuns] = useState<
-    AsyncState<HistoricalRun[]>
-  >({ data: null, loading: true, error: null });
-  const [selectedRun, setSelectedRun] = useState<HistoricalRun | null>(null);
 
-  // Step 1: Fetch Holidays
   useEffect(() => {
     (async () => {
       try {
@@ -59,9 +54,6 @@ export function HistoricalsDashboard() {
     })();
   }, []);
 
-  const holidaysReady = !holidays.loading;
-
-  // Step 2: Set startDate to 14 business days from today after holidays are loaded
   useEffect(() => {
     if (holidays.data) {
       setDateRange((prev) => ({
@@ -71,22 +63,9 @@ export function HistoricalsDashboard() {
     }
   }, [holidays.data]);
 
-  // Step 2: Fetch historical runs after holidays are loaded
-  useEffect(() => {
-    if (!holidaysReady) return;
-    (async () => {
-      try {
-        const data = await fetchHistoricalRuns();
-        setHistoricalRuns({ data, loading: false, error: null });
-      } catch (err) {
-        setHistoricalRuns({
-          data: null,
-          loading: false,
-          error: (err as Error).message,
-        });
-      }
-    })();
-  }, [holidaysReady]);
+  if (!holidays.data) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div class="app-layout">
@@ -95,45 +74,7 @@ export function HistoricalsDashboard() {
         onChange={setDateRange}
         holidays={holidays.data}
       />
-      <main class="app-main">
-        {historicalRuns.loading && <p>Loading...</p>}
-        {historicalRuns.error && <p>Error: {historicalRuns.error}</p>}
-        {historicalRuns.data && (
-          <>
-            <p class="results-count">
-              Wyświetlanie {historicalRuns.data.length} runów
-            </p>
-            <table>
-              <thead>
-                <tr>
-                  <th>Valuation Date</th>
-                  <th>Total Counterparty</th>
-                  <th>Start Date</th>
-                  <th>End Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {historicalRuns.data.map((run) => (
-                  <tr
-                    key={run.valuationDate}
-                    class="run-row"
-                    onClick={() => setSelectedRun(run)}
-                  >
-                    <td>{run.valuationDate}</td>
-                    <td>{run.totalCounterparty}</td>
-                    <td>{run.startDate}</td>
-                    <td>{run.endDate}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
-      </main>
-      <HistoricalsDrawer
-        run={selectedRun}
-        onClose={() => setSelectedRun(null)}
-      />
+      <HistoricalsContent />
     </div>
   );
 }
