@@ -48,7 +48,7 @@ export function HistoricalsDashboard() {
   const [dateRange, setDateRange] = useState<DateRange>(initialDateRange);
 
   useEffect(() => {
-    (async () => {
+    const init = async () => {
       try {
         const data = await fetchHolidays();
         setHolidays({ data, loading: false, error: null });
@@ -59,7 +59,9 @@ export function HistoricalsDashboard() {
           error: (err as Error).message,
         });
       }
-    })();
+    };
+
+    init();
   }, []);
 
   useEffect(() => {

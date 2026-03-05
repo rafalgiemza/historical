@@ -31,6 +31,7 @@ const MOCK_HOLIDAYS: Holiday[] = [
 ];
 
 export async function fetchHolidays(): Promise<Holiday[]> {
+  console.log("%c 🔺: MOCK_HOLIDAYS ", MOCK_HOLIDAYS);
   return Promise.resolve(MOCK_HOLIDAYS);
 }
 
@@ -56,6 +57,7 @@ const MOCK_HISTORICAL_RUNS: HistoricalRun[] = [
 ];
 
 export async function fetchHistoricalRuns(): Promise<HistoricalRun[]> {
+  console.log("%c 🔺: MOCK_HISTORICAL_RUNS ", MOCK_HISTORICAL_RUNS);
   return Promise.resolve(MOCK_HISTORICAL_RUNS);
 }
 
@@ -66,6 +68,7 @@ const MOCK_EMAIL_RUNS: EmailRun[] = [
 ];
 
 export async function fetchEmailRuns(): Promise<EmailRun[]> {
+  console.log("%c 🔺: MOCK_EMAIL_RUNS ", MOCK_EMAIL_RUNS);
   return Promise.resolve(MOCK_EMAIL_RUNS);
 }
 
@@ -76,6 +79,7 @@ const MOCK_OPTIMA_RUNS: OptimaRun[] = [
 ];
 
 export async function fetchOptimaRuns(): Promise<OptimaRun[]> {
+  console.log("%c 🔺: MOCK_OPTIMA_RUNS ", MOCK_OPTIMA_RUNS);
   return Promise.resolve(MOCK_OPTIMA_RUNS);
 }
 
