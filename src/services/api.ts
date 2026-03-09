@@ -81,8 +81,8 @@ const MOCK_EMAIL_RUNS: EmailRun[] = [
   { fileId: 103, batchStartDate: "03/01/2026", batchEndDate: "03/15/2026" },
 ];
 
-export async function fetchEmailRuns(): Promise<EmailRun[]> {
-  console.log("%c 🔺: MOCK_EMAIL_RUNS ", MOCK_EMAIL_RUNS);
+export async function fetchEmailRuns(valuationDate: string): Promise<EmailRun[]> {
+  console.log("%c 🔺: MOCK_EMAIL_RUNS ", MOCK_EMAIL_RUNS, { valuationDate });
   return Promise.resolve(MOCK_EMAIL_RUNS);
 }
 
@@ -92,8 +92,8 @@ const MOCK_OPTIMA_RUNS: OptimaRun[] = [
   { aging: 3, batchStartDate: "03/01/2026", batchEndDate: "03/15/2026" },
 ];
 
-export async function fetchOptimaRuns(): Promise<OptimaRun[]> {
-  console.log("%c 🔺: MOCK_OPTIMA_RUNS ", MOCK_OPTIMA_RUNS);
+export async function fetchOptimaRuns(valuationDate: string): Promise<OptimaRun[]> {
+  console.log("%c 🔺: MOCK_OPTIMA_RUNS ", MOCK_OPTIMA_RUNS, { valuationDate });
   return Promise.resolve(MOCK_OPTIMA_RUNS);
 }
 

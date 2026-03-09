@@ -32,7 +32,7 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
 
     (async () => {
       try {
-        const data = await fetchEmailRuns();
+        const data = await fetchEmailRuns(run.valuationDate);
         setEmailRuns({ data, loading: false, error: null });
       } catch (err) {
         setEmailRuns({
@@ -52,7 +52,7 @@ export function HistoricalsDrawer({ run, onClose }: HistoricalsDrawerProps) {
 
     (async () => {
       try {
-        const data = await fetchOptimaRuns();
+        const data = await fetchOptimaRuns(run.valuationDate);
         setOptimaRuns({ data, loading: false, error: null });
       } catch (err) {
         setOptimaRuns({
