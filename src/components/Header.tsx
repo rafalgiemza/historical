@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useState } from 'react';
 import type { GeoLocation } from '../types';
 
 interface HeaderProps {

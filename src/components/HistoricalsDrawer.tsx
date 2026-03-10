@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect } from 'react';
 import type { AsyncState } from "../types";
 import type { HistoricalRun, EmailRun, OptimaRun } from "../historical.types";
 import { fetchEmailRuns, fetchOptimaRuns } from "../services/api";

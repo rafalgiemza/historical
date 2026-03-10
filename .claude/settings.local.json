@@ -2,9 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(dir:*)",
-      "Bash(npm install preact-router)",
       "Bash(node -e \"const dp = require\\(''c:/Users/rafal/Projects/port-rec/node_modules/react-datepicker''\\); console.log\\(Object.keys\\(dp\\)\\)\")",
-      "Bash(node -e \":*)"
+      "Bash(node -e \":*)",
+      "Bash(npm i:*)",
+      "Bash(npm install:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }

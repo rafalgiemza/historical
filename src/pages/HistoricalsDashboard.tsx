@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect } from 'react';
 import { fetchHolidays } from "../services/api";
 import type { AsyncState } from "../types";
 import type { Holiday } from "../historical.types";

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "preact/hooks";
+import { useState, useEffect, useRef } from 'react';
 import type { User, Post, Comment, AsyncState } from "../types";
 import { fetchPostsByUser, fetchCommentsByPostIds } from "../services/api";
 

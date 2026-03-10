@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect } from 'react';
 import { fetchHistoricalRuns } from "../services/api";
 import type { AsyncState } from "../types";
 import type { HistoricalRun } from "../historical.types";
